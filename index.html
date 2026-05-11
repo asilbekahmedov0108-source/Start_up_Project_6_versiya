@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangMaster Pro — Ultimate Language Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060b14;
+            --bg2: #0a1128;
+            --glass: rgba(15, 23, 42, 0.75);
+            --glass2: rgba(15, 23, 42, 0.5);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --dim: #64748b;
+            --accent: #00f0c0;
+            --accent2: #00d4aa;
+            --gold: #fbbf24;
+            --pink: #f472b6;
+            --blue: #60a5fa;
+            --purple: #a78bfa;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+        
+        canvas#bgCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(150px);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatOrb 30s infinite linear;
+        }
+        .orb-1 { width: 700px; height: 700px; background: var(--accent); top: -300px; left: -300px; opacity: 0.08; }
+        .orb-2 { width: 600px; height: 600px; background: var(--gold); bottom: -300px; right: -300px; opacity: 0.06; animation-direction: reverse; animation-duration: 35s; }
+        .orb-3 { width: 500px; height: 500px; background: var(--pink); top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; animation-duration: 25s; }
+        
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(80px, -60px); }
+            50% { transform: translate(-40px, 80px); }
+            75% { transform: translate(60px, 40px); }
+        }
+        
+        .glass {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); }
+        .no-lift:hover { transform: none; box-shadow: var(--shadow); }
+        
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--border);
+            height: 70px;
+        }
+        
+        .nav-in {
+            max-width: 1400px; margin: 0 auto; height: 100%;
+            display: flex; align-items: center; padding: 0 20px; gap: 12px;
+        }
+        
+        .logo {
+            font-family: 'Outfit'; font-weight: 900; font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+        }
+        .logo i { -webkit-text-fill-color: var(--gold); font-size: 1.5rem; }
+        
+        .nav-scroll-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        
+        .nav-scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-scroll-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        
+        .nav-scroll-btn.left { left: 0; }
+        .nav-scroll-btn.right { right: 0; }
+        
+        .nav-menu {
+            display: flex; gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+            padding: 5px 0;
+        }
+        .nav-menu::-webkit-scrollbar { display: none; }
+        
+        .nav-menu a {
+            color: var(--dim); text-decoration: none; padding: 10px 16px;
+            border-radius: 12px; font-weight: 700; font-size: 0.8rem;
+            cursor: pointer; transition: all 0.3s; white-space: nowrap;
+            display: flex; align-items: center; gap: 6px; position: relative;
+        }
+        .nav-menu a:hover, .nav-menu a.active { color: var(--accent); background: rgba(0, 240, 192, 0.1); }
+        .nav-menu a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%); width: 20px; height: 3px;
+            background: var(--accent); border-radius: 2px;
+        }
+        
+        .nav-r { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .hearts { display: flex; gap: 3px; font-size: 1.1rem; }
+        .heart { color: var(--danger); animation: heartBeat 1s infinite; transition: all 0.3s; }
+        .heart.lost { color: var(--dim); opacity: 0.3; animation: none; transform: scale(0.8); }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        
+        .xp-badge {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #000; padding: 6px 12px; border-radius: 20px;
+            font-weight: 800; font-size: 0.8rem;
+            display: flex; align-items: center; gap: 5px;
+        }
+        
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--glass);
+            color: var(--text); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; font-size: 0.95rem;
+        }
+        .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.1) rotate(5deg); }
+        
+        main {
+            position: relative; z-index: 1;
+            max-width: 1300px; margin: 0 auto;
+            padding: 90px 20px 100px;
+        }
+        
+        .page { display: none; animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .title {
+            font-family: 'Outfit'; font-size: 1.5rem; font-weight: 800;
+            margin-bottom: 30px; display: flex; align-items: center; gap: 12px;
+        }
+        .title i { color: var(--accent); font-size: 1.2rem; }
+        .title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+        
+        .btn {
+            padding: 14px 28px; border-radius: 14px; border: none;
+            font-family: 'Nunito'; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 8px;
+            position: relative; overflow: hidden;
+        }
+        .btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.2), transparent); opacity: 0; transition: opacity 0.3s; }
+        .btn:hover::before { opacity: 1; }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-p { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #060b14; box-shadow: 0 8px 30px rgba(0, 240, 192, 0.3); }
+        .btn-p:hover { box-shadow: 0 12px 40px rgba(0, 240, 192, 0.5); transform: translateY(-3px); }
+        .btn-o { background: transparent; color: var(--dim); border: 2px solid var(--border); }
+        .btn-o:hover { color: var(--accent); border-color: var(--accent); background: rgba(0, 240, 192, 0.05); }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), #f59e0b); color: #000; box-shadow: 0 8px 30px rgba(251, 191, 36, 0.3); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #dc2626); color: #fff; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.3); }
+        .btn-sm { padding: 10px 18px; font-size: 0.85rem; border-radius: 10px; }
+        
+        .mega-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .card { cursor: pointer; overflow: hidden; border-radius: 24px; }
+        .card-img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover .card-img { transform: scale(1.1); }
+        .card-body { padding: 24px; }
+        .card-body h3 { font-family: 'Outfit'; font-size: 1.2rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .card-body p { color: var(--dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 14px; }
+        .tag { font-size: 0.7rem; padding: 5px 12px; border-radius: 8px; font-weight: 800; letter-spacing: 0.5px; }
+        
+        .wotd {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.12), rgba(0, 240, 192, 0.08));
+            border: 1px solid rgba(96, 165, 250, 0.25); border-radius: 28px;
+            padding: 40px; text-align: center; margin-bottom: 40px;
+            position: relative; overflow: hidden;
+        }
+        .wotd::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.2), transparent 70%); pointer-events: none; }
+        
+        .chat-box { display: flex; flex-direction: column; height: calc(100vh - 200px); max-height: 650px; border: 1px solid var(--border); border-radius: 28px; overflow: hidden; background: var(--glass); }
+        .chat-msgs { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        .m { max-width: 80%; padding: 16px 20px; border-radius: 20px; font-size: 0.9rem; line-height: 1.6; animation: msgIn 0.3s ease; }
+        @keyframes msgIn { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .m-bot { background: var(--bg); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 6px; }
+        .m-user { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #060b14; align-self: flex-end; font-weight: 700; border-bottom-right-radius: 6px; }
+        
+        .chat-in { padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--glass2); }
+        .chat-in input {
+            flex: 1; background: var(--bg); border: 2px solid var(--border);
+            border-radius: 14px; padding: 14px 18px; color: var(--text);
+            font-size: 0.95rem; outline: none; transition: all 0.3s; font-family: 'Nunito';
+        }
+        .chat-in input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 240, 192, 0.15); }
+        
+        .mic-btn { color: var(--danger); }
+        .mic-btn.active { animation: pulseMic 1s infinite; color: #fff; background: var(--danger); border-color: var(--danger); }
+        @keyframes pulseMic { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } }
+        
+        .flip-wrap { perspective: 1500px; width: 100%; max-width: 550px; height: 320px; margin: 0 auto; cursor: pointer; }
+        .flip-in { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .flip-in.flipped { transform: rotateY(180deg); }
+        .f-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; border-radius: 28px; border: 2px solid var(--border); background: var(--glass); }
+        .f-back { transform: rotateY(180deg); border-color: rgba(0, 240, 192, 0.4); }
+        
+        .q-opt { width: 100%; padding: 18px; margin-bottom: 12px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-size: 1rem; font-family: 'Nunito'; font-weight: 700; text-align: left; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+        .q-opt:hover { border-color: var(--accent); transform: translateX(8px); background: rgba(0, 240, 192, 0.05); }
+        .q-opt.ok { border-color: var(--success); background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .q-opt.no { border-color: var(--danger); background: rgba(239, 68, 68, 0.15); color: var(--danger); animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        
+        .mem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 600px; margin: 0 auto; }
+        .mem-item { aspect-ratio: 3/4; perspective: 800px; cursor: pointer; }
+        .mem-in { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .mem-in.flip { transform: rotateY(180deg); }
+        .mem-f { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; border: 2px solid var(--border); background: var(--glass); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; padding: 8px; text-align: center; word-break: break-word; transition: all 0.3s; }
+        .mem-f:hover { border-color: var(--accent); }
+        .mem-b { transform: rotateY(180deg); }
+        .mem-item.done .mem-in { opacity: 0.3; pointer-events: none; transform: rotateY(180deg); }
+        
+        .typing-input { background: var(--bg); border: 3px solid var(--border); border-radius: 20px; padding: 18px 24px; color: var(--text); font-size: 1.6rem; font-family: 'Outfit'; font-weight: 700; text-align: center; width: 100%; outline: none; transition: all 0.3s; letter-spacing: 2px; }
+        .typing-input:focus { border-color: var(--accent); box-shadow: 0 0 40px rgba(0, 240, 192, 0.2); }
+        .typing-input.correct { border-color: var(--success); box-shadow: 0 0 40px rgba(34, 197, 94, 0.3); }
+        .typing-input.wrong { border-color: var(--danger); box-shadow: 0 0 40px rgba(239, 68, 68, 0.3); animation: shake 0.5s; }
+        
+        .lb-row { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 0.9rem; transition: all 0.3s; }
+        .lb-row:last-child { border-bottom: none; }
+        .lb-row:hover { background: rgba(0, 240, 192, 0.03); }
+        .lb-row.me { background: rgba(0, 240, 192, 0.08); border-left: 4px solid var(--accent); }
+        .lb-av { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; margin: 0 14px; flex-shrink: 0; }
+        
+        .toast-c { position: fixed; top: 80px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 14px 20px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; animation: toastIn 0.4s cubic-bezier(0.4, 0, 0.2, 1), toastOut 0.4s ease 2.8s forwards; display: flex; align-items: center; gap: 8px; background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(20px); min-width: 240px; }
+        .toast.ok { border-color: rgba(0, 240, 192, 0.4); color: var(--accent); }
+        .toast.err { border-color: rgba(239, 68, 68, 0.4); color: var(--danger); }
+        .toast.gold { border-color: rgba(251, 191, 36, 0.4); color: var(--gold); }
+        @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1); } }
+        @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
+        
+        .progress-bar { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 4px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        
+        .shop-item { background: var(--bg); border: 2px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .shop-item:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(251, 191, 36, 0.15); }
+        .shop-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+        .shop-price { background: linear-gradient(135deg, var(--gold), #f59e0b); color: #000; padding: 5px 14px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; display: inline-block; margin-top: 10px; }
+        
+        .hangman-word { display: flex; gap: 10px; justify-content: center; margin: 25px 0; flex-wrap: wrap; }
+        .hangman-letter { width: 45px; height: 55px; border-bottom: 4px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Outfit'; font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+        .hangman-letter.empty { border-color: var(--border); }
+        .letter-btns { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 20px; }
+        .letter-btn { width: 42px; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-family: 'Outfit'; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .letter-btn:hover { border-color: var(--accent); transform: scale(1.1); }
+        .letter-btn.used { opacity: 0.3; pointer-events: none; }
+        .letter-btn.correct { background: rgba(0, 240, 192, 0.2); border-color: var(--accent); color: var(--accent); }
+        .letter-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
+        
+        .scramble-letters { display: flex; gap: 10px; justify-content: center; margin: 25px 0; flex-wrap: wrap; }
+        .scramble-letter { width: 50px; height: 60px; border: 3px solid var(--gold); border-radius: 14px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); display: flex; align-items: center; justify-content: center; font-family: 'Outfit'; font-size: 2rem; font-weight: 900; color: var(--gold); cursor: pointer; transition: all 0.3s; }
+        .scramble-letter:hover { transform: scale(1.1) rotate(5deg); }
+        .scramble-letter.selected { background: var(--gold); color: #000; transform: scale(0.95); }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 200; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: var(--glass); border: 1px solid var(--border); border-radius: 32px; padding: 45px; text-align: center; max-width: 480px; width: 90%; animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .daily-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; }
+        .daily-day { background: var(--bg); border: 2px solid var(--border); border-radius: 14px; padding: 14px 8px; text-align: center; transition: all 0.3s; }
+        .daily-day.claimed { border-color: var(--accent); background: rgba(0, 240, 192, 0.1); }
+        .daily-day.today { border-color: var(--gold); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); } }
+        
+        .particle { position: fixed; pointer-events: none; z-index: 150; font-size: 1.5rem; animation: particleFloat 1.5s ease-out forwards; }
+        @keyframes particleFloat { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-100px) scale(0.5); } }
+        
+        .stat-card { background: var(--bg); border: 1px solid var(--border); border-radius: 18px; padding: 20px; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .stat-value { font-family: 'Outfit'; font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, var(--accent), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-label { color: var(--dim); font-size: 0.8rem; margin-top: 6px; font-weight: 700; }
+        
+        .word-builder { display: flex; gap: 10px; justify-content: center; margin: 25px 0; min-height: 65px; flex-wrap: wrap; }
+        .word-builder-letter { width: 50px; height: 60px; border: 3px solid var(--accent); border-radius: 14px; background: linear-gradient(135deg, rgba(0, 240, 192, 0.1), rgba(0, 212, 170, 0.05)); display: flex; align-items: center; justify-content: center; font-family: 'Outfit'; font-size: 2rem; font-weight: 900; color: var(--accent); cursor: pointer; transition: all 0.3s; }
+        .word-builder-letter:hover { transform: scale(1.1); background: rgba(0, 240, 192, 0.2); }
+        
+        .sentence-translate { background: var(--bg); border: 2px solid var(--border); border-radius: 20px; padding: 25px; margin: 20px 0; text-align: center; }
+        .sentence-translate h3 { font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; color: var(--accent); }
+        
+        @media (max-width: 768px) {
+            .mega-grid { grid-template-columns: 1fr; }
+            .mem-grid { grid-template-columns: repeat(3, 1fr); }
+            .daily-grid { grid-template-columns: repeat(4, 1fr); }
+            main { padding: 80px 14px 80px; }
+            .title { font-size: 1.2rem; }
+            .nav-scroll-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="toast-c" id="toastC"></div>
+
+<nav>
+    <div class="nav-in">
+        <div class="logo" onclick="go('home')"><i class="fas fa-language"></i> LangMaster</div>
+        
+        <div class="nav-scroll-wrapper">
+            <button class="nav-scroll-btn left" onclick="scrollNav(-100)"><i class="fas fa-chevron-left"></i></button>
+            <button class="nav-scroll-btn right" onclick="scrollNav(100)"><i class="fas fa-chevron-right"></i></button>
+            
+            <div class="nav-menu" id="navM">
+                <a class="active" onclick="go('home')"><i class="fas fa-home"></i> Bosh sahifa</a>
+                <a onclick="go('bot')"><i class="fas fa-robot"></i> AI Ustoz</a>
+                <a onclick="go('cards')"><i class="fas fa-clone"></i> Kartochkalar</a>
+                <a onclick="go('quiz')"><i class="fas fa-bolt"></i> Quiz</a>
+                <a onclick="go('memory')"><i class="fas fa-brain"></i> Xotira</a>
+                <a onclick="go('typing')"><i class="fas fa-tachometer-alt"></i> Tezlik</a>
+                <a onclick="go('hangman')"><i class="fas fa-skull-crossbones"></i> Arqon</a>
+                <a onclick="go('scramble')"><i class="fas fa-random"></i> Aralash</a>
+                <a onclick="go('wordbuilder')"><i class="fas fa-puzzle-piece"></i> So'z Tuzish</a>
+                <a onclick="go('sentences')"><i class="fas fa-align-left"></i> Gaplar</a>
+                <a onclick="go('shop')"><i class="fas fa-store"></i> Do'kon</a>
+                <a onclick="go('daily')"><i class="fas fa-gift"></i> Sovg'a</a>
+                <a onclick="go('rank')"><i class="fas fa-trophy"></i> Reyting</a>
+                <a onclick="go('prof')"><i class="fas fa-chart-pie"></i> Profil</a>
+            </div>
+        </div>
+        
+        <div class="nav-r">
+            <div class="hearts" id="heartsDisplay"></div>
+            <div class="xp-badge" id="xpBadge"><i class="fas fa-coins"></i> <span id="xpDisplay">0</span></div>
+            <button class="icon-btn" onclick="document.body.classList.toggle('light')"><i class="fas fa-adjust"></i></button>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="page active" id="page-home">
+        <div style="text-align:center;padding:40px 0 30px">
+            <h1 style="font-family:'Outfit';font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:20px">Tilni <em style="font-style:normal;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">o'rganishni</em><br>boshla</h1>
+            <p style="color:var(--dim);font-size:1.1rem;max-width:550px;margin:0 auto;line-height:1.7">Massiv funksiyalar, sun'iy intellekt va professional gamifikatsiya bilan to'liq ta'lim platformasi.</p>
+        </div>
+        <div id="wotdArea"></div>
+        <div class="mega-grid" id="homeGrid"></div>
+    </div>
+
+    <div class="page" id="page-bot">
+        <div class="title"><i class="fas fa-robot"></i> AI Til Ustozi</div>
+        <div class="chat-box">
+            <div class="chat-msgs" id="chatMsgs">
+                <div class="m m-bot">Salom! Men <strong>LangMaster AI</strong>. Menga istalgan so'zni yozing yoki <strong>ayting</strong>. Men <span style="color:var(--gold)">istalgan til</span>dagi so'zni topaman! 🌍</div>
+            </div>
+            <div class="chat-in">
+                <input type="text" id="chatInp" placeholder="So'z yozing..." onkeydown="if(event.key==='Enter')sendMsg()">
+                <button class="icon-btn mic-btn" id="micBtn" onclick="toggleVoice()"><i class="fas fa-microphone"></i></button>
+                <button class="btn btn-p btn-sm" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page" id="page-cards">
+        <div class="title"><i class="fas fa-clone"></i> Flip Kartochkalar</div>
+        <div style="text-align:center;margin-bottom:20px;font-family:'Outfit';font-weight:800;color:var(--dim);font-size:1rem" id="cardCount"></div>
+        <div class="flip-wrap" id="flipCard" onclick="flipCur()"></div>
+        <div style="display:flex;justify-content:center;gap:12px;margin-top:25px">
+            <button class="btn btn-o btn-sm" onclick="sayCur()"><i class="fas fa-volume-up"></i> Tinglash</button>
+            <button class="btn btn-p btn-sm" onclick="nextCard()">Keyingi <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+    
+    <div class="page" id="page-quiz">
+        <div class="title"><i class="fas fa-bolt"></i> Bilimni Tekshirish</div>
+        <div id="quizArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-memory">
+        <div class="title"><i class="fas fa-brain"></i> Xotira O'yini</div>
+        <div style="text-align:center;margin-bottom:20px;font-family:'Outfit';font-weight:800;color:var(--accent);font-size:1.1rem" id="memScore"></div>
+        <div class="mem-grid" id="memGrid"></div>
+        <div style="text-align:center;margin-top:25px">
+            <button class="btn btn-o btn-sm" onclick="startMem()"><i class="fas fa-sync-alt"></i> Yangi O'yin</button>
+        </div>
+    </div>
+    
+    <div class="page" id="page-typing">
+        <div class="title"><i class="fas fa-tachometer-alt"></i> Tezlik Testi (60 soniya)</div>
+        <div id="typArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-hangman">
+        <div class="title"><i class="fas fa-skull-crossbones"></i> Arqon O'yini</div>
+        <div id="hangmanArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-scramble">
+        <div class="title"><i class="fas fa-random"></i> So'zlarni Toping</div>
+        <div id="scrambleArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-wordbuilder">
+        <div class="title"><i class="fas fa-puzzle-piece"></i> So'z Tuzish</div>
+        <div id="wordbuilderArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-sentences">
+        <div class="title"><i class="fas fa-align-left"></i> Gaplarni Tarjima Qiling</div>
+        <div id="sentencesArea" style="max-width:700px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-shop">
+        <div class="title"><i class="fas fa-store"></i> Do'kon</div>
+        <div id="shopArea" style="max-width:900px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-daily">
+        <div class="title"><i class="fas fa-gift"></i> Kunlik Sovg'a</div>
+        <div id="dailyArea" style="max-width:700px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-rank">
+        <div class="title"><i class="fas fa-trophy"></i> Global Reyting</div>
+        <div id="rankArea" style="max-width:650px;margin:0 auto"></div>
+    </div>
+    
+    <div class="page" id="page-prof">
+        <div class="title"><i class="fas fa-chart-pie"></i> Profil va Statistika</div>
+        <div id="profArea" style="max-width:900px;margin:0 auto"></div>
+    </div>
+</main>
+
+<script>
+// === BACKGROUND PARTICLES ===
+(function(){
+    var c = document.getElementById('bgCanvas'), ctx = c.getContext('2d'), pts = [], mouse = {x: -1000, y: -1000};
+    function resize() { c.width = innerWidth; c.height = innerHeight; }
+    resize();
+    window.onresize = resize;
+    document.onmousemove = function(e) { mouse.x = e.clientX; mouse.y = e.clientY; };
+    
+    var count = innerWidth < 768 ? 40 : 70;
+    for (var i = 0; i < count; i++) {
+        pts.push({
+            x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+            vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 2 + 0.5,
+            color: ['0,240,192', '251,191,36', '244,114,182'][Math.floor(Math.random() * 3)]
+        });
+    }
+    
+    function draw() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        for (var i = 0; i < pts.length; i++) {
+            var p = pts[i];
+            var dx = mouse.x - p.x, dy = mouse.y - p.y, dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 150) {
+                p.vx += dx * 0.00005;
+                p.vy += dy * 0.00005;
+            }
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > c.width) p.vx *= -1;
+            if (p.y < 0 || p.y > c.height) p.vy *= -1;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + p.color + ', 0.4)';
+            ctx.fill();
+            
+            for (var j = i + 1; j < pts.length; j++) {
+                var p2 = pts[j], d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if (d < 90) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = 'rgba(0,240,192,' + (0.12 * (1 - d/90)) + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === NAVIGATION SCROLL ===
+function scrollNav(amount) {
+    var menu = document.getElementById('navM');
+    menu.scrollBy({ left: amount, behavior: 'smooth' });
+}
+
+// === DATABASE ===
+var data = {
+    en: [
+        {w:'Hello',t:'Salom',ex:'Hello, how are you?'},{w:'Goodbye',t:'Xayr',ex:'Goodbye!'},{w:'Please',t:'Iltimos',ex:'Please sit down.'},{w:'Water',t:'Suv',ex:'Can I have water?'},{w:'Book',t:'Kitob',ex:'I am reading a book.'},{w:'Friend',t:"Do'st",ex:'My best friend.'},{w:'Love',t:'Sevgi',ex:'I love my family.'},{w:'Time',t:'Vaqt',ex:'What time is it?'},{w:'City',t:'Shahar',ex:'Big city.'},{w:'Beautiful',t:'Chiroyli',ex:'Beautiful day!'},{w:'Work',t:'Ish',ex:'Work from home.'},{w:'School',t:'Maktab',ex:'Go to school.'},{w:'Food',t:'Ovqat',ex:'Delicious food.'},{w:'Family',t:'Oila',ex:'My family is big.'},{w:'Music',t:'Musiqa',ex:'Listening to music.'},{w:'Happy',t:'Baxtli',ex:'I am happy.'},{w:'Night',t:'Kechasi',ex:'Good night.'},{w:'Morning',t:'Ertalab',ex:'Good morning!'},{w:'Summer',t:'Yoz',ex:'I love summer.'},{w:'Car',t:'Mashina',ex:'New car.'},{w:'Dog',t:'It',ex:'Friendly dog.'},{w:'Cat',t:'Mushuk',ex:'Sleeping cat.'},{w:'Tree',t:'Daraxt',ex:'Big tree.'},{w:'Rain',t:"Yomg'ir",ex:'It is raining.'},{w:'Eat',t:'Yemoq',ex:'We eat lunch.'},{w:'Sleep',t:'Uxlamoq',ex:'I sleep 8 hours.'},{w:'Run',t:'Yugurmoq',ex:'He likes to run.'},{w:'Write',t:'Yozmoq',ex:'Write your name.'},{w:'Read',t:"O'qimoq",ex:'Read a book.'},{w:'Big',t:'Katta',ex:'A big house.'},{w:'Fast',t:'Tez',ex:'Very fast car.'},{w:'Small',t:'Kichik',ex:'Small cat.'},{w:'Good',t:'Yaxshi',ex:'Good job!'},{w:'Bad',t:'Yomon',ex:'Bad weather.'},{w:'Hot',t:'Issiq',ex:'Hot day.'},{w:'Cold',t:'Sovuq',ex:'Cold water.'},{w:'New',t:'Yangi',ex:'New book.'},{w:'Old',t:'Eski',ex:'Old house.'},{w:'Young',t:'Yosh',ex:'Young man.'},{w:'Strong',t:'Kuchli',ex:'Strong man.'},{w:'Money',t:'Pul',ex:'I need money.'},{w:'Phone',t:'Telefon',ex:'Answer the phone.'},{w:'Computer',t:'Kompyuter',ex:'Turn on computer.'},{w:'Apple',t:'Olma',ex:'Red apple.'}
+    ],
+    ru: [
+        {w:'Привет',t:'Salom',ex:'Привет, как дела?'},{w:'Спасибо',t:'Rahmat',ex:'Спасибо большое!'},{w:'Вода',t:'Suv',ex:'Можно воды?'},{w:'Книга',t:'Kitob',ex:'Я читаю книгу.'},{w:'Дом',t:'Uy',ex:'Это мой дом.'},{w:'Друг',t:"Do'st",ex:'Мой лучший друг.'},{w:'Любовь',t:'Sevgi',ex:'Любовь прекрасна.'},{w:'Время',t:'Vaqt',ex:'Который час?'},{w:'Работа',t:'Ish',ex:'Интересная работа.'},{w:'Город',t:'Shahar',ex:'Большой город.'},{w:'Счастливый',t:'Baxtli',ex:'Я очень счастлив.'},{w:'Снег',t:'Qor',ex:'Идет снег.'},{w:'Есть',t:'Yemoq',ex:'Мы едим.'},{w:'Спать',t:'Uxlamoq',ex:'Спать 8 часов.'},{w:'Быстрый',t:'Tez',ex:'Быстрая машина.'},{w:'Красивый',t:'Chiroyli',ex:'Красивый день.'},{w:'Музыка',t:'Musiqa',ex:'Слушать музыку.'},{w:'Семья',t:'Oila',ex:'Моя семья.'},{w:'Школа',t:'Maktab',ex:'Идти в школу.'},{w:'Еда',t:'Ovqat',ex:'Вкусная еда.'},{w:'Деньги',t:'Pul',ex:'Много денег.'}
+    ],
+    de: [
+        {w:'Hallo',t:'Salom',ex:'Hallo!'},{w:'Danke',t:'Rahmat',ex:'Danke schön!'},{w:'Wasser',t:'Suv',ex:'Wasser bitte.'},{w:'Buch',t:'Kitob',ex:'Ich lese ein Buch.'},{w:'Haus',t:'Uy',ex:'Das ist mein Haus.'},{w:'Freund',t:"Do'st",ex:'Mein Freund.'},{w:'Liebe',t:'Sevgi',ex:'Liebe ist schön.'},{w:'Zeit',t:'Vaqt',ex:'Wie spät ist es?'},{w:'Schule',t:'Maktab',ex:'Ich gehe zur Schule.'},{w:'Schön',t:'Chiroyli',ex:'Schönes Wetter.'},{w:'Arbeit',t:'Ish',ex:'Die Arbeit.'},{w:'Stadt',t:'Shahar',ex:'Große Stadt.'},{w:'Essen',t:'Ovqat',ex:'Das Essen.'},{w:'Musik',t:'Musiqa',ex:'Ich höre Musik.'},{w:'Familie',t:'Oila',ex:'Meine Familie.'}
+    ],
+    tr: [
+        {w:'Merhaba',t:'Salom',ex:'Merhaba!'},{w:'Teşekkürler',t:'Rahmat',ex:'Teşekkür ederim!'},{w:'Su',t:'Suv',ex:'Bir bardak su.'},{w:'Kitap',t:'Kitob',ex:'Kitap okuyorum.'},{w:'Ev',t:'Uy',ex:'Benim evim.'},{w:'Arkadaş',t:"Do'st",ex:'Arkadaşım.'},{w:'Sevgi',t:'Sevgi',ex:'Sevgi güzeldir.'},{w:'Zaman',t:'Vaqt',ex:'Saat kaç?'},{w:'Okul',t:'Maktab',ex:'Okula gidiyorum.'},{w:'Güzel',t:'Chiroyli',ex:'Ne güzel!'},{w:'İş',t:'Ish',ex:'Çalışıyorum.'},{w:'Şehir',t:'Shahar',ex:'Büyük şehir.'}
+    ]
+};
+
+// Сентенции для перевода
+var sentences = {
+    en: [
+        {s:'I love my family',t:'Men oilamni sevoraman'},{s:'The weather is beautiful today',t:'Bugun ob-havo chiroyli'},{s:'I want to learn English',t:'Men ingliz tilini o\'rganmoqchiman'},{s:'She is my best friend',t:'U mening eng yaxshi do\'stim'},{s:'We go to school every day',t:'Biz har kuni maktabga boramiz'},{s:'I like reading books',t:'Men kitob o\'qishni yoqtiraman'},{s:'He works in a big company',t:'U katta kompaniyada ishlaydi'},{s:'They have two children',t:'Ularning ikkita farzandi bor'},{s:'The food is very delicious',t:'Ovqat juda mazali'},{s:'I wake up early in the morning',t:'Men ertalab erta turaman'}
+    ]
+};
+
+// === STATE ===
+var lang = 'en', words = [], xp = 0, lives = 3, maxLives = 5;
+var prof = {n: "O'quvchi", w: 0, t: 0, games: 0, streak: 0, lastLogin: null};
+var inventory = {shield: 0, hint: 0, double: 0, doubleEnd: 0};
+
+try {
+    xp = parseInt(localStorage.getItem('xp') || '0') || 0;
+    lives = parseInt(localStorage.getItem('lives') || '3') || 3;
+    var savedProf = localStorage.getItem('pr');
+    if(savedProf) prof = JSON.parse(savedProf);
+    var savedInv = localStorage.getItem('inv');
+    if(savedInv) inventory = JSON.parse(savedInv);
+    
+    if(typeof inventory.shield === 'undefined') inventory.shield = 0;
+    if(typeof inventory.hint === 'undefined') inventory.hint = 0;
+    if(typeof inventory.double === 'undefined') inventory.double = 0;
+    if(typeof inventory.doubleEnd === 'undefined') inventory.doubleEnd = 0;
+} catch(e) {}
+
+function save() {
+    try {
+        localStorage.setItem('xp', xp);
+        localStorage.setItem('lives', lives);
+        localStorage.setItem('pr', JSON.stringify(prof));
+        localStorage.setItem('inv', JSON.stringify(inventory));
+    } catch(e) {}
+    updateUI();
+}
+
+function esc(t) { var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+function shuf(a) { return [...a].sort(function() { return Math.random() - 0.5; }); }
+
+function toast(m, t) {
+    var c = document.getElementById('toastC'), d = document.createElement('div');
+    d.className = 'toast ' + (t || 'ok');
+    var icon = t === 'ok' ? 'fa-check-circle' : t === 'err' ? 'fa-times-circle' : 'fa-star';
+    d.innerHTML = '<i class="fas ' + icon + '"></i> ' + m;
+    c.appendChild(d);
+    setTimeout(function() { if(d.parentNode) d.remove(); }, 3200);
+}
+
+function speak(t) {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = lang === 'de' ? 'de-DE' : lang === 'ru' ? 'ru-RU' : lang === 'tr' ? 'tr-TR' : 'en-US';
+    u.rate = 0.9;
+    speechSynthesis.speak(u);
+}
+
+function addXP(amount) {
+    if (inventory.doubleEnd && Date.now() < inventory.doubleEnd) amount *= 2;
+    xp += amount;
+    spawnParticles(amount);
+    save();
+}
+
+function loseLife() {
+    if (inventory.shield > 0) {
+        inventory.shield--;
+        toast('Qalqon saqlab qoldi! 🛡️', 'gold');
+        save();
+        return false;
+    }
+    lives--;
+    save();
+    if (lives <= 0) { gameOver(); return true; }
+    toast('Hayot yo\'qoldi! ❤️', 'err');
+    return false;
+}
+
+function spawnParticles(count) {
+    for (var i = 0; i < Math.min(count, 6); i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = '⭐';
+        p.style.left = (Math.random() * 80 + 10) + '%';
+        p.style.top = (Math.random() * 80 + 10) + '%';
+        document.body.appendChild(p);
+        setTimeout(function(el) { el.remove(); }, 1500, p);
+    }
+}
+
+function gameOver() {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div class="modal"><div style="font-size:4rem;margin-bottom:20px">💀</div><h2 style="font-family:Outfit;font-size:2rem;font-weight:900;margin-bottom:10px">O\'yin Tugadi!</h2><p style="color:var(--dim);margin-bottom:30px;font-size:1rem">Hayotlar tugadi. Do\'konga boring!</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button class="btn btn-o btn-sm" onclick="this.closest(\'.modal-overlay\').remove();go(\'shop\')"><i class="fas fa-store"></i> Do\'kon</button><button class="btn btn-p btn-sm" onclick="this.closest(\'.modal-overlay\').remove();go(\'home\')"><i class="fas fa-home"></i> Bosh sahifa</button></div></div>';
+    document.body.appendChild(overlay);
+}
+
+function updateUI() {
+    document.getElementById('xpDisplay').textContent = xp;
+    var heartsHtml = '';
+    for (var i = 0; i < maxLives; i++) {
+        heartsHtml += '<i class="fas fa-heart heart' + (i >= lives ? ' lost' : '') + '"></i>';
+    }
+    document.getElementById('heartsDisplay').innerHTML = heartsHtml;
+}
+
+// === NAVIGATION ===
+var pages = ['home', 'bot', 'cards', 'quiz', 'memory', 'typing', 'hangman', 'scramble', 'wordbuilder', 'sentences', 'shop', 'daily', 'rank', 'prof'];
+
+function go(id) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-menu a').forEach(function(a, i) { a.classList.toggle('active', pages[i] === id); });
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    
+    // Initialize page content
+    if (id === 'cards') initCards();
+    if (id === 'quiz') initQuiz();
+    if (id === 'memory') startMem();
+    if (id === 'typing') initTyping();
+    if (id === 'hangman') initHangman();
+    if (id === 'scramble') initScramble();
+    if (id === 'wordbuilder') initWordBuilder();
+    if (id === 'sentences') initSentences();
+    if (id === 'shop') initShop();
+    if (id === 'daily') initDaily();
+    if (id === 'rank') initRank();
+    if (id === 'prof') initProf();
+    if (id === 'bot') initChat();
+    if (id === 'home') initHome();
+}
+
+// === VOICE RECOGNITION ===
+var recognition = null;
+var isListening = false;
+
+function initVoice() {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        document.getElementById('micBtn').style.display = 'none';
+        return;
+    }
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onresult = function(event) {
+        var transcript = event.results[0][0].transcript;
+        document.getElementById('chatInp').value = transcript;
+        toggleVoice();
+        sendMsg();
+    };
+    recognition.onerror = function(event) {
+        toast('Ovozni tanishda xato', 'err');
+        toggleVoice();
+    };
+    recognition.onend = function() {
+        if(isListening) toggleVoice();
+    };
+}
+
+function toggleVoice() {
+    if (!recognition) return;
+    var btn = document.getElementById('micBtn');
+    isListening = !isListening;
+    
+    if (isListening) {
+        recognition.lang = lang === 'de' ? 'de-DE' : lang === 'ru' ? 'ru-RU' : lang === 'tr' ? 'tr-TR' : 'en-US';
+        recognition.start();
+        btn.classList.add('active');
+        toast('Gapiring...', 'ok');
+    } else {
+        recognition.stop();
+        btn.classList.remove('active');
+    }
+}
+
+// === HOME ===
+function initHome() {
+    var seed = new Date().toISOString().split('T')[0];
+    var wotd = words[parseInt(seed.split('-').join('')) % words.length];
+    document.getElementById('wotdArea').innerHTML = '<div class="wotd"><div style="font-size:.8rem;color:var(--blue);font-weight:800;margin-bottom:10px;position:relative"><i class="fas fa-calendar-day"></i> Kunlik So\'z</div><div style="font-family:Outfit;font-size:2.5rem;font-weight:900;position:relative">' + esc(wotd.w) + '</div><div style="color:var(--accent);font-size:1rem;margin-top:6px;position:relative;font-weight:700">' + esc(wotd.t) + '</div><div style="color:var(--dim);font-size:.9rem;margin-top:10px;position:relative;font-style:italic">"' + esc(wotd.ex) + '"</div><button class="btn btn-o btn-sm" style="margin-top:14px;position:relative" onclick="speak(\'' + wotd.w.replace(/'/g, "\\'") + '\')"><i class="fas fa-volume-up"></i> Tinglash</button></div>';
+    
+    var feat = [
+        {id:'bot',i:'fa-robot',c:'var(--blue)',t:'AI Ustoz',d:'Zamonaviy AI bilan real vaqtda tarjima oling.',g:'ChatGPT'},
+        {id:'cards',i:'fa-clone',c:'var(--accent)',t:'Kartochkalar',d:'Massiv lug\'atni 3D flip-effekt bilan yodlang.',g:'3D Mashq'},
+        {id:'quiz',i:'fa-bolt',c:'var(--gold)',t:'Mega Quiz',d:'Bilimingizni 10 ta savol orqali sinab ko\'ring.',g:'Test'},
+        {id:'memory',i:'fa-brain',c:'var(--pink)',t:'Xotira O\'yini',d:'Kartalarni ag\'darib xotirangizni mustahkamlang.',g:'Puzzle'},
+        {id:'typing',i:'fa-tachometer-alt',c:'var(--danger)',t:'Tezlik Testi',d:'60 soniya ichida nechta so\'z tarjima qila olasiz?',g:'Speed'},
+        {id:'hangman',i:'fa-skull-crossbones',c:'var(--purple)',t:'Arqon O\'yini',d:'Harflarni toping, so\'zni oching!',g:'Classic'},
+        {id:'scramble',i:'fa-random',c:'var(--accent)',t:'So\'zlarni Toping',d:'Aralashib ketgan harflardan to\'g\'ri so\'zni tuzing.',g:'Word'},
+        {id:'wordbuilder',i:'fa-puzzle-piece',c:'var(--blue)',t:'So\'z Tuzish',d:'Harflardan to\'g\'ri so\'zni quring.',g:'Builder'},
+        {id:'sentences',i:'fa-align-left',c:'var(--pink)',t:'Gaplarni Tarjima',d:'Butun gaplarni tarjima qiling.',g:'Sentences'},
+        {id:'shop',i:'fa-store',c:'var(--gold)',t:'Do\'kon',d:'XP bilan hayot, qalqon va bonuslar sotib oling.',g:'Shop'},
+        {id:'daily',i:'fa-gift',c:'var(--pink)',t:'Kunlik Sovg\'a',d:'Har kuni kirib bepul XP oling!',g:'Daily'},
+        {id:'rank',i:'fa-trophy',c:'var(--gold)',t:'Global Reyting',d:'Boshqa foydalanuvchilar bilan bellashuv.',g:'MMO'},
+        {id:'prof',i:'fa-chart-pie',c:'var(--accent)',t:'Profil',d:'Statistika va yutuqlar.',g:'Stats'}
+    ];
+    
+    var h = '';
+    for (var i = 0; i < feat.length; i++) {
+        var f = feat[i];
+        h += '<div class="glass card" onclick="go(\'' + f.id + '\')"><div class="card-body"><h3><i class="fas ' + f.i + '" style="color:' + f.c + '"></i> ' + f.t + '</h3><p>' + f.d + '</p><span class="tag" style="background:' + f.c + '18;color:' + f.c + '">' + f.g + '</span></div></div>';
+    }
+    document.getElementById('homeGrid').innerHTML = h;
+}
+
+// === AI CHAT ===
+function initChat() {
+    document.getElementById('chatMsgs').innerHTML = '<div class="m m-bot">Salom! Men <strong>LangMaster AI</strong>. Menga istalgan so\'zni yozing yoki <strong>ayting</strong>. Men <span style="color:var(--gold)">istalgan til</span>dagi so\'zni topaman! 🌍</div>';
+    document.getElementById('chatInp').value = '';
+}
+
+async function sendMsg() {
+    var inp = document.getElementById('chatInp'), msgs = document.getElementById('chatMsgs'), q = inp.value.trim();
+    if (!q) return;
+    
+    msgs.innerHTML += '<div class="m m-user">' + esc(q) + '</div>';
+    inp.value = '';
+    
+    var loadId = 'load-' + Date.now();
+    msgs.innerHTML += '<div class="m m-bot" id="'+loadId+'" style="color:var(--dim)"><i class="fas fa-spinner fa-spin"></i> Qidirilmoqda...</div>';
+    msgs.scrollTop = msgs.scrollHeight;
+
+    var res = null;
+    var searchQ = q.toLowerCase();
+    
+    for (var key in data) {
+        for (var i = 0; i < data[key].length; i++) {
+            if (data[key][i].w.toLowerCase() === searchQ || data[key][i].t.toLowerCase() === searchQ) {
+                res = data[key][i];
+                break;
+            }
+        }
+        if(res) break;
+    }
+
+    if (!res) {
+        try {
+            var apiUrl = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(q) + '&langpair=autodetect|uz';
+            let response = await fetch(apiUrl);
+            let dataJson = await response.json();
+            
+            if (dataJson.responseStatus === 200 && dataJson.responseData.translatedText) {
+                var translated = dataJson.responseData.translatedText;
+                if (translated.toLowerCase() !== searchQ.toLowerCase()) {
+                    res = { w: q, t: translated, ex: 'Avtomatik tarjima', isApi: true };
+                }
+            }
+        } catch(e) {}
+    }
+
+    document.getElementById(loadId)?.remove();
+
+    if (res) {
+        var source = res.isApi ? '🌐 Internet' : '📚 Lug\'at';
+        var sw = res.w.replace(/'/g, "\\'");
+        msgs.innerHTML += '<div class="m m-bot">' +
+            '<div style="font-size:.7rem;color:var(--dim);margin-bottom:6px"><i class="fas fa-check-circle" style="color:var(--success)"></i> ' + source + '</div>' +
+            '<strong style="font-size:1.2rem">' + esc(res.w) + '</strong><br>' +
+            '<span style="font-size:1.3rem;font-weight:800;color:var(--accent)">' + esc(res.t) + '</span><br>' +
+            (res.ex ? '<span style="color:var(--dim);font-size:.85rem;font-style:italic">"' + esc(res.ex) + '"</span><br>' : '') +
+            '<button class="btn btn-o btn-sm" onclick="speak(\'' + sw + '\')" style="margin-top:8px"><i class="fas fa-volume-up"></i> Tinglash</button></div>';
+        addXP(5);
+        prof.w++;
+        save();
+    } else {
+        msgs.innerHTML += '<div class="m m-bot" style="color:var(--pink)">😔 Kechirasiz, topa olmadim.</div>';
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+// === FLASHCARDS ===
+var cIdx = 0, cArr = [];
+function initCards() { cArr = shuf([...words]); cIdx = 0; renderC(); }
+function renderC() {
+    if (cIdx >= cArr.length) {
+        document.getElementById('flipCard').innerHTML = '<div class="f-face" style="background:linear-gradient(135deg,rgba(0,240,192,0.1),rgba(251,191,36,0.1))"><div style="font-size:3.5rem;margin-bottom:14px">🎉</div><div style="font-family:Outfit;font-size:2rem;font-weight:900;color:var(--accent)">Bravo!</div><div style="color:var(--dim);margin-top:8px">Barchasini ko\'rdingiz</div></div>';
+        document.getElementById('cardCount').textContent = 'Tugadi!'; addXP(20); prof.games++; save(); return;
+    }
+    var w = cArr[cIdx];
+    document.getElementById('cardCount').textContent = (cIdx + 1) + ' / ' + cArr.length;
+    document.getElementById('flipCard').innerHTML = '<div class="flip-in" id="fInner"><div class="f-face"><div style="font-family:Outfit;font-size:2.5rem;font-weight:900">' + esc(w.w) + '</div><div style="color:var(--dim);font-size:.85rem;margin-top:14px"><i class="fas fa-hand-pointer"></i> Bosib o\'giring</div></div><div class="f-face f-back"><div style="font-size:1.6rem;font-weight:800;color:var(--accent)">' + esc(w.t) + '</div><div style="color:var(--dim);font-size:.9rem;margin-top:14px;font-style:italic">"' + esc(w.ex) + '"</div></div></div>';
+}
+function flipCur() { var el = document.getElementById('fInner'); if (el) el.classList.toggle('flipped'); }
+function sayCur() { if (cArr[cIdx]) speak(cArr[cIdx].w); }
+function nextCard() { cIdx++; renderC(); }
+
+// === QUIZ ===
+var qArr = [], qI = 0, qS = 0;
+function initQuiz() {
+    if (lives <= 0) { gameOver(); return; }
+    qArr = shuf([...words]).slice(0, 10).map(function(w) {
+        var ot = words.filter(function(x) { return x.t !== w.t; }).slice(0, 3).map(function(x) { return x.t; });
+        var ops = shuf([w.t].concat(ot));
+        return {q: '"' + w.w + '" tarjimasi?', o: ops, a: ops.indexOf(w.t)};
+    });
+    qI = 0; qS = 0; renderQ();
+}
+function renderQ() {
+    var a = document.getElementById('quizArea');
+    if (qI >= qArr.length) {
+        a.innerHTML = '<div class="glass no-lift" style="padding:50px;text-align:center"><div style="font-size:3.5rem;margin-bottom:16px">' + (qS >= 8 ? '🏆' : qS >= 5 ? '⭐' : '💪') + '</div><div style="font-family:Outfit;font-size:3.5rem;font-weight:900;color:var(--accent)">' + qS + '/' + qArr.length + '</div><p style="color:var(--dim);margin:16px 0 25px;font-size:1.1rem">Natijangiz</p><button class="btn btn-p btn-sm" onclick="initQuiz()"><i class="fas fa-redo"></i> Qayta Boshlash</button></div>';
+        if (qS > 0) { addXP(qS * 8); prof.t++; prof.games++; save(); } return;
+    }
+    var q = qArr[qI];
+    var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="font-family:Outfit;font-weight:800;color:var(--dim);font-size:.9rem">Savol ' + (qI + 1) + ' / ' + qArr.length + '</span><span style="font-family:Outfit;font-weight:800;color:var(--gold);font-size:.9rem"><i class="fas fa-star"></i> ' + qS + '</span></div><div class="glass no-lift" style="padding:30px;text-align:center;margin-bottom:24px"><h3 style="font-size:1.3rem">' + esc(q.q) + '</h3></div>';
+    for (var i = 0; i < q.o.length; i++) {
+        h += '<button class="q-opt" id="qo' + i + '" onclick="checkA(' + i + ')"><span style="width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">' + String.fromCharCode(65 + i) + '</span> ' + esc(q.o[i]) + '</button>';
+    }
+    a.innerHTML = h;
+}
+function checkA(i) {
+    var q = qArr[qI]; var btns = document.querySelectorAll('.q-opt');
+    btns.forEach(function(b, j) { b.disabled = true; b.style.pointerEvents = 'none'; if (j === q.a) b.classList.add('ok'); if (j === i && i !== q.a) b.classList.add('no'); });
+    if (i === q.a) { qS++; toast('To\'g\'ri! +8 ball', 'ok'); } else { toast('Xato! Javob: ' + q.o[q.a], 'err'); if (loseLife()) return; }
+    setTimeout(function() { qI++; renderQ(); }, 1000);
+}
+
+// === MEMORY ===
+var mArr = [], mFlipped = [], mMatched = 0, mLock = false;
+function startMem() {
+    if (lives <= 0) { gameOver(); return; }
+    var sub = shuf([...words]).slice(0, 8); mArr = [];
+    sub.forEach(function(w, i) { mArr.push({id: i, t: 'w', x: w.w}); mArr.push({id: i, t: 't', x: w.t}); });
+    mArr = shuf(mArr); mFlipped = []; mMatched = 0; mLock = false; renderM();
+}
+function renderM() {
+    document.getElementById('memScore').textContent = 'Topilgan: ' + mMatched + ' / 8';
+    var h = '';
+    for (var i = 0; i < mArr.length; i++) {
+        var c = mArr[i], isF = mFlipped.indexOf(i) !== -1, isM = false;
+        for (var j = 0; j < mFlipped.length; j += 2) {
+            if (mFlipped[j] < mArr.length && mFlipped[j + 1] < mArr.length && mArr[mFlipped[j]].id === c.id && mArr[mFlipped[j + 1]].id === c.id) isM = true;
+        }
+        var col = c.t === 'w' ? 'var(--accent)' : 'var(--gold)';
+        h += '<div class="mem-item' + (isM ? ' done' : '') + '" onclick="flipM(' + i + ')"><div class="mem-in' + (isF || isM ? ' flip' : '') + '"><div class="mem-f"><i class="fas fa-question" style="color:var(--dim);font-size:1.3rem"></i></div><div class="mem-f mem-b" style="color:' + col + '">' + esc(c.x) + '</div></div></div>';
+    }
+    document.getElementById('memGrid').innerHTML = h;
+    if (mMatched === 8) { setTimeout(function() { toast('O\'yin yakunlandi! +60 XP', 'ok'); addXP(60); prof.games++; save(); }, 400); }
+}
+function flipM(i) {
+    if (mLock || mFlipped.indexOf(i) !== -1) return;
+    mFlipped.push(i); renderM();
+    if (mFlipped.length % 2 === 0) {
+        mLock = true;
+        var i1 = mFlipped[mFlipped.length - 2], i2 = mFlipped[mFlipped.length - 1];
+        if (mArr[i1].id === mArr[i2].id && mArr[i1].t !== mArr[i2].t) {
+            mMatched++; toast('Topildi! ✨', 'ok'); setTimeout(function() { mLock = false; }, 500);
+        } else {
+            toast('Mos kelmadi!', 'err');
+            setTimeout(function() { mFlipped.pop(); mFlipped.pop(); renderM(); mLock = false; if (loseLife()) return; }, 700);
+        }
+    }
+}
+
+// === TYPING ===
+var tArr = [], tI = 0, tScore = 0, tTime = 60, tInt = null, tStarted = false;
+function initTyping() {
+    if (lives <= 0) { gameOver(); return; }
+    tArr = shuf([...words]).slice(0, 20); tI = 0; tScore = 0; tTime = 60; tStarted = false;
+    if (tInt) clearInterval(tInt); renderT();
+}
+function renderT() {
+    var a = document.getElementById('typArea');
+    if (tTime <= 0 || tI >= tArr.length) {
+        var wpm = Math.round(tScore);
+        a.innerHTML = '<div style="text-align:center;padding:40px"><div style="font-size:3.5rem;margin-bottom:16px">' + (wpm >= 15 ? '🚀' : wpm >= 10 ? '⭐' : '💪') + '</div><div style="font-family:Outfit;font-size:4rem;font-weight:900;color:var(--accent)">' + wpm + '</div><div style="color:var(--dim);margin:8px 0;font-size:1.1rem">So\'zlar daqiqada</div><button class="btn btn-p btn-sm" onclick="initTyping()"><i class="fas fa-redo"></i> Qayta</button></div>';
+        if (wpm > 0) { addXP(wpm * 4); prof.games++; save(); } return;
+    }
+    var w = tArr[tI];
+    a.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="font-family:Outfit;font-size:2.5rem;font-weight:900;color:' + (tTime <= 10 ? 'var(--danger)' : 'var(--accent)') + '">' + tTime + 's</span><span style="font-family:Outfit;font-size:1.3rem;font-weight:800;color:var(--gold)"><i class="fas fa-check"></i> ' + tScore + '</span></div><div class="progress-bar" style="margin-bottom:30px"><div class="progress-fill" style="width:' + (tTime / 60 * 100) + '%"></div></div><div class="glass no-lift" style="padding:35px;text-align:center;margin-bottom:20px"><div style="font-family:Outfit;font-size:2.5rem;font-weight:900;margin-bottom:10px">' + esc(w.w) + '</div><div style="color:var(--dim);font-size:1rem">Tarjimasini yozing</div></div><input type="text" class="typing-input" id="tInp" placeholder="..." autofocus onkeydown="if(event.key===\'Enter\')checkT()">';
+    setTimeout(function() { document.getElementById('tInp')?.focus(); }, 100);
+    if (!tStarted) {
+        tStarted = true;
+        tInt = setInterval(function() {
+            tTime--;
+            if (tTime <= 0) { clearInterval(tInt); renderT(); return; }
+            var timeEl = document.querySelector('#typArea span:first-child');
+            var progEl = document.querySelector('#typArea .progress-fill');
+            if(timeEl) timeEl.textContent = tTime + 's';
+            if(progEl) progEl.style.width = (tTime / 60 * 100) + '%';
+        }, 1000);
+    }
+}
+function checkT() {
+    var inp = document.getElementById('tInp'); if (!inp || !tArr[tI]) return;
+    if (inp.value.trim().toLowerCase() === tArr[tI].t.toLowerCase()) { tScore++; inp.classList.add('correct'); toast('To\'g\'ri! ✅', 'ok'); }
+    else { inp.classList.add('wrong'); toast('Xato: ' + tArr[tI].t, 'err'); if (loseLife()) { clearInterval(tInt); return; } }
+    setTimeout(function() { tI++; renderT(); }, 400);
+}
+
+// === HANGMAN ===
+var hWord = '', hGuessed = [], hWrong = 0, hMaxWrong = 6;
+function initHangman() {
+    if (lives <= 0) { gameOver(); return; }
+    var w = shuf([...words])[0]; hWord = w.w.toUpperCase(); hGuessed = []; hWrong = 0; renderHangman();
+}
+function renderHangman() {
+    var a = document.getElementById('hangmanArea');
+    var wordHtml = '<div class="hangman-word">';
+    for (var i = 0; i < hWord.length; i++) { wordHtml += '<div class="hangman-letter' + (hGuessed.indexOf(hWord[i]) !== -1 ? '' : ' empty') + '">' + (hGuessed.indexOf(hWord[i]) !== -1 ? hWord[i] : '') + '</div>'; }
+    wordHtml += '</div>';
+    
+    var svg = '<svg width="180" height="190" viewBox="0 0 200 210"><line x1="20" y1="200" x2="180" y2="200" stroke="var(--dim)" stroke-width="3"/><line x1="60" y1="200" x2="60" y2="20" stroke="var(--dim)" stroke-width="3"/><line x1="60" y1="20" x2="100" y2="20" stroke="var(--dim)" stroke-width="3"/><line x1="100" y1="20" x2="100" y2="30" stroke="var(--dim)" stroke-width="3"/>';
+    if(hWrong>=1) svg += '<circle cx="100" cy="60" r="30" stroke="var(--text)" stroke-width="3" fill="none"/>';
+    if(hWrong>=2) svg += '<line x1="100" y1="90" x2="100" y2="150" stroke="var(--text)" stroke-width="3"/>';
+    if(hWrong>=3) svg += '<line x1="100" y1="110" x2="70" y2="140" stroke="var(--text)" stroke-width="3"/>';
+    if(hWrong>=4) svg += '<line x1="100" y1="110" x2="130" y2="140" stroke="var(--text)" stroke-width="3"/>';
+    if(hWrong>=5) svg += '<line x1="100" y1="150" x2="70" y2="190" stroke="var(--text)" stroke-width="3"/>';
+    if(hWrong>=6) svg += '<line x1="100" y1="150" x2="130" y2="190" stroke="var(--text)" stroke-width="3"/>';
+    svg += '</svg>';
+
+    var lettersHtml = '<div class="letter-btns">';
+    for (var i = 0; i < 26; i++) {
+        var l = String.fromCharCode(65 + i);
+        var cls = 'letter-btn';
+        if (hGuessed.indexOf(l) !== -1) {
+            cls += hWord.indexOf(l) !== -1 ? ' correct' : ' wrong used';
+        }
+        lettersHtml += '<button class="' + cls + '" onclick="guessLetter(\'' + l + '\')">' + l + '</button>';
+    }
+    lettersHtml += '</div>';
+    
+    a.innerHTML = '<div class="glass no-lift" style="padding:25px;margin-bottom:20px;text-align:center">' + svg + '</div>' + wordHtml + lettersHtml + '<div style="text-align:center;margin-top:20px"><button class="btn btn-o btn-sm" onclick="initHangman()"><i class="fas fa-redo"></i> Yangi So\'z</button></div>';
+    
+    var won = true;
+    for (var i = 0; i < hWord.length; i++) { if (hGuessed.indexOf(hWord[i]) === -1) { won = false; break; } }
+    
+    if (hWrong >= hMaxWrong) {
+        var wObj = words.find(function(w) { return w.w.toUpperCase() === hWord; });
+        setTimeout(function() { toast('Yutqazdingiz! So\'z: ' + hWord + ' - ' + (wObj ? wObj.t : ''), 'err'); if (loseLife()) return; }, 500);
+    } else if (won) {
+        setTimeout(function() { toast('Tabriklayman! 🎉 +25 XP', 'ok'); addXP(25); prof.games++; save(); initHangman(); }, 700);
+    }
+}
+function guessLetter(l) { if (hGuessed.indexOf(l) !== -1 || hWrong >= hMaxWrong) return; hGuessed.push(l); if (hWord.indexOf(l) === -1) hWrong++; renderHangman(); }
+
+// === SCRAMBLE ===
+var sWord = '', sScrambled = '', sSelected = [], sAnswer = '';
+function initScramble() {
+    if (lives <= 0) { gameOver(); return; }
+    var w = shuf([...words])[0]; sWord = w.t; sScrambled = shuf(w.t.split('')).join(''); sSelected = []; sAnswer = ''; renderScramble();
+}
+function renderScramble() {
+    var a = document.getElementById('scrambleArea'); var wObj = words.find(function(w) { return w.t === sWord; });
+    var lettersHtml = '<div class="scramble-letters">';
+    for (var i = 0; i < sScrambled.length; i++) { lettersHtml += '<div class="scramble-letter' + (sSelected.indexOf(i) !== -1 ? ' selected' : '') + '" onclick="selectScrambleLetter(' + i + ')">' + sScrambled[i] + '</div>'; }
+    lettersHtml += '</div>';
+    a.innerHTML = '<div class="glass no-lift" style="padding:30px;text-align:center;margin-bottom:20px"><div style="color:var(--dim);font-size:.85rem;margin-bottom:10px">So\'zni toping</div><div style="font-family:Outfit;font-size:2.2rem;font-weight:900;color:var(--accent)">' + (wObj ? esc(wObj.w) : '') + '</div></div>' + lettersHtml + '<div style="text-align:center;margin:25px 0;font-family:Outfit;font-size:1.8rem;font-weight:900;min-height:50px">' + (sAnswer || '_ '.repeat(sWord.length).trim()) + '</div><div style="display:flex;gap:10px;justify-content:center"><button class="btn btn-o btn-sm" onclick="resetScramble()"><i class="fas fa-undo"></i> Qayta</button><button class="btn btn-o btn-sm" onclick="initScramble()"><i class="fas fa-forward"></i> Keyingi</button></div>';
+}
+function selectScrambleLetter(i) { var idx = sSelected.indexOf(i); if (idx !== -1) sSelected.splice(idx, 1); else sSelected.push(i); sAnswer = sSelected.map(function(si) { return sScrambled[si]; }).join(''); renderScramble(); if (sAnswer.length === sWord.length) checkScramble(); }
+function resetScramble() { sSelected = []; sAnswer = ''; renderScramble(); }
+function checkScramble() { if (sAnswer === sWord) { toast('To\'g\'ri! 🎉 +15 XP', 'ok'); addXP(15); prof.games++; save(); setTimeout(initScramble, 800); } else { toast('Xato! Javob: ' + sWord, 'err'); if (loseLife()) return; setTimeout(initScramble, 800); } }
+
+// === WORD BUILDER ===
+var wbWord = '', wbLetters = [], wbSelected = [], wbAnswer = '';
+function initWordBuilder() {
+    if (lives <= 0) { gameOver(); return; }
+    var w = shuf([...words])[0]; wbWord = w.w; wbLetters = shuf(w.w.split('')); wbSelected = []; wbAnswer = ''; renderWordBuilder();
+}
+function renderWordBuilder() {
+    var a = document.getElementById('wordbuilderArea');
+    var wObj = words.find(function(w) { return w.w === wbWord; });
+    
+    var lettersHtml = '<div class="scramble-letters">';
+    for (var i = 0; i < wbLetters.length; i++) {
+        var isSelected = wbSelected.indexOf(i) !== -1;
+        lettersHtml += '<div class="scramble-letter' + (isSelected ? ' selected' : '') + '" onclick="selectWBLetter(' + i + ')" style="border-color:var(--accent);color:var(--accent);' + (isSelected ? 'background:var(--accent);color:#000' : '') + '">' + wbLetters[i] + '</div>';
+    }
+    lettersHtml += '</div>';
+    
+    var answerHtml = '<div class="word-builder">';
+    for (var i = 0; i < wbWord.length; i++) {
+        var letter = wbAnswer[i] || '';
+        answerHtml += '<div class="word-builder-letter" onclick="removeWBLetter(' + i + ')">' + letter + '</div>';
+    }
+    answerHtml += '</div>';
+    
+    a.innerHTML = '<div class="glass no-lift" style="padding:30px;text-align:center;margin-bottom:20px"><div style="color:var(--dim);font-size:.85rem;margin-bottom:10px">So\'zni tuzing</div><div style="font-family:Outfit;font-size:1.5rem;font-weight:800;color:var(--gold)">' + (wObj ? esc(wObj.t) : '') + '</div></div>' + answerHtml + lettersHtml + '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px"><button class="btn btn-o btn-sm" onclick="initWordBuilder()"><i class="fas fa-redo"></i> Yangi</button></div>';
+}
+function selectWBLetter(i) {
+    if (wbSelected.indexOf(i) !== -1 || wbAnswer.length >= wbWord.length) return;
+    wbSelected.push(i);
+    wbAnswer += wbLetters[i];
+    renderWordBuilder();
+    if (wbAnswer.length === wbWord.length) checkWordBuilder();
+}
+function removeWBLetter(pos) {
+    if (pos >= wbAnswer.length) return;
+    wbSelected.splice(pos, 1);
+    wbAnswer = wbAnswer.substring(0, pos) + wbAnswer.substring(pos + 1);
+    renderWordBuilder();
+}
+function checkWordBuilder() {
+    if (wbAnswer === wbWord) {
+        toast('To\'g\'ri! 🎉 +20 XP', 'ok');
+        addXP(20);
+        prof.games++;
+        save();
+        setTimeout(initWordBuilder, 800);
+    } else {
+        toast('Xato! Javob: ' + wbWord, 'err');
+        if (loseLife()) return;
+        setTimeout(initWordBuilder, 800);
+    }
+}
+
+// === SENTENCES ===
+var sentArr = [], sentI = 0, sentScore = 0;
+function initSentences() {
+    if (lives <= 0) { gameOver(); return; }
+    sentArr = shuf([...(sentences[lang] || sentences.en)]).slice(0, 5);
+    sentI = 0;
+    sentScore = 0;
+    renderSentences();
+}
+function renderSentences() {
+    var a = document.getElementById('sentencesArea');
+    if (sentI >= sentArr.length) {
+        a.innerHTML = '<div class="glass no-lift" style="padding:50px;text-align:center"><div style="font-size:3.5rem;margin-bottom:16px">📝</div><div style="font-family:Outfit;font-size:3rem;font-weight:900;color:var(--accent)">' + sentScore + '/' + sentArr.length + '</div><p style="color:var(--dim);margin:16px 0 25px">Gaplar tarjimasi</p><button class="btn btn-p btn-sm" onclick="initSentences()"><i class="fas fa-redo"></i> Qayta</button></div>';
+        if (sentScore > 0) { addXP(sentScore * 15); prof.games++; save(); }
+        return;
+    }
+    var s = sentArr[sentI];
+    a.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="font-family:Outfit;font-weight:800;color:var(--dim);font-size:.9rem">Gap ' + (sentI + 1) + ' / ' + sentArr.length + '</span><span style="font-family:Outfit;font-weight:800;color:var(--gold);font-size:.9rem"><i class="fas fa-star"></i> ' + sentScore + '</span></div><div class="sentence-translate"><h3>' + esc(s.s) + '</h3><input type="text" class="typing-input" id="sentInp" placeholder="Tarjimasini yozing..." style="font-size:1.2rem" onkeydown="if(event.key===\'Enter\')checkSentence()"></div><button class="btn btn-p btn-sm" onclick="checkSentence()" style="display:block;margin:0 auto"><i class="fas fa-check"></i> Tekshirish</button>';
+    setTimeout(function() { document.getElementById('sentInp')?.focus(); }, 100);
+}
+function checkSentence() {
+    var inp = document.getElementById('sentInp');
+    if (!inp || !sentArr[sentI]) return;
+    var userAnswer = inp.value.trim().toLowerCase();
+    var correctAnswer = sentArr[sentI].t.toLowerCase();
+    
+    if (userAnswer === correctAnswer) {
+        sentScore++;
+        inp.classList.add('correct');
+        toast('To\'g\'ri! +15 XP', 'ok');
+    } else {
+        inp.classList.add('wrong');
+        toast('Xato! Javob: ' + sentArr[sentI].t, 'err');
+        if (loseLife()) return;
+    }
+    setTimeout(function() { sentI++; renderSentences(); }, 1000);
+}
+
+// === SHOP ===
+var shopItems = [
+    {id:'life1',name:'+1 Hayot',icon:'❤️',price:50,type:'life'},
+    {id:'life3',name:'+3 Hayot',icon:'💖',price:120,type:'life',value:3},
+    {id:'xp50',name:'+50 XP',icon:'⭐',price:30,type:'xp',value:50},
+    {id:'xp200',name:'+200 XP',icon:'🌟',price:100,type:'xp',value:200},
+    {id:'shield',name:'Qalqon',icon:'🛡️',price:80,type:'shield'},
+    {id:'hint',name:'Ishora (3ta)',icon:'💡',price:60,type:'hint',value:3},
+    {id:'double',name:'2x XP (5 daqiqa)',icon:'✨',price:150,type:'double'}
+];
+function initShop() {
+    var h = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">';
+    for (var i = 0; i < shopItems.length; i++) { var item = shopItems[i]; h += '<div class="shop-item" onclick="buyItem(\'' + item.id + '\')"><span class="shop-icon">' + item.icon + '</span><h3 style="font-family:Outfit;font-size:1rem;margin-bottom:6px">' + item.name + '</h3><div class="shop-price"><i class="fas fa-coins"></i> ' + item.price + '</div></div>'; }
+    h += '</div><div class="glass no-lift" style="padding:25px;margin-top:25px"><h3 style="font-family:Outfit;font-size:1.1rem;font-weight:800;margin-bottom:16px"><i class="fas fa-box-open" style="color:var(--gold)"></i> Inventar</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px"><div class="stat-card"><div class="stat-value">' + inventory.shield + '</div><div class="stat-label">🛡️ Qalqon</div></div><div class="stat-card"><div class="stat-value">' + inventory.hint + '</div><div class="stat-label">💡 Ishora</div></div><div class="stat-card"><div class="stat-value">' + (inventory.doubleEnd > Date.now() ? 'Aktiv' : '0') + '</div><div class="stat-label">✨ 2x XP</div></div></div></div>';
+    document.getElementById('shopArea').innerHTML = h;
+}
+function buyItem(id) {
+    var item = shopItems.find(function(i) { return i.id === id; }); if (!item) return;
+    if (xp < item.price) { toast('XP yetarli emas!', 'err'); return; }
+    xp -= item.price;
+    switch(item.type) {
+        case 'life': lives = Math.min(maxLives, lives + (item.value || 1)); toast('+' + (item.value || 1) + ' hayot!', 'gold'); break;
+        case 'xp': xp += item.value; toast('+' + item.value + ' XP!', 'gold'); break;
+        case 'shield': inventory.shield++; toast('Qalqon olindi!', 'gold'); break;
+        case 'hint': inventory.hint += (item.value || 1); toast('+' + (item.value || 1) + ' ishora!', 'gold'); break;
+        case 'double': inventory.doubleEnd = Date.now() + 5 * 60 * 1000; toast('2x XP aktiv!', 'gold'); break;
+    }
+    save(); initShop(); spawnParticles(5);
+}
+
+// === DAILY ===
+function initDaily() {
+    var today = new Date().toDateString(); var lastLogin = prof.lastLogin ? new Date(prof.lastLogin).toDateString() : null;
+    var dayIndex = prof.streak || 0; var canClaim = lastLogin !== today;
+    var rewards = [{xp:10,icon:'⭐'},{xp:20,icon:'🌟'},{xp:30,icon:'💫'},{xp:50,icon:'✨'},{xp:75,icon:'🔥'},{xp:100,icon:'💎'},{xp:200,icon:'👑'}];
+    var h = '<div class="glass no-lift" style="padding:30px;text-align:center;margin-bottom:25px"><div style="font-size:3rem;margin-bottom:14px">🎁</div><h2 style="font-family:Outfit;font-size:1.6rem;font-weight:900;margin-bottom:6px">Kunlik Sovg\'a</h2><p style="color:var(--dim);font-size:.95rem">Har kuni kirib bepul XP oling!</p><div style="margin-top:12px;font-family:Outfit;font-weight:800;color:var(--gold);font-size:1rem">Seriya: ' + dayIndex + ' kun</div></div><div class="daily-grid">';
+    for (var i = 0; i < 7; i++) {
+        var r = rewards[i]; var isClaimed = i < dayIndex % 7; var isToday = i === dayIndex % 7 && canClaim;
+        h += '<div class="daily-day' + (isClaimed ? ' claimed' : '') + (isToday ? ' today' : '') + '"><div style="font-size:1.8rem;margin-bottom:6px">' + (isClaimed ? '✅' : r.icon) + '</div><div style="font-size:.7rem;color:var(--dim);margin-bottom:3px">Kun ' + (i + 1) + '</div><div style="font-family:Outfit;font-weight:800;color:var(--gold);font-size:.8rem">+' + r.xp + '</div></div>';
+    }
+    h += '</div>';
+    if (canClaim) h += '<div style="text-align:center;margin-top:25px"><button class="btn btn-gold btn-sm" onclick="claimDaily()"><i class="fas fa-gift"></i> Sovg\'ani Olish</button></div>';
+    else h += '<div style="text-align:center;margin-top:25px;color:var(--dim);font-weight:700;font-size:.9rem">✅ Bugungi sovg\'a olindi</div>';
+    document.getElementById('dailyArea').innerHTML = h;
+}
+function claimDaily() {
+    var today = new Date().toDateString(); var lastLogin = prof.lastLogin ? new Date(prof.lastLogin).toDateString() : null;
+    if (lastLogin === today) { toast('Siz allaqachon olgansiz!', 'err'); return; }
+    var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    prof.streak = (lastLogin === yesterday.toDateString()) ? (prof.streak || 0) + 1 : 1;
+    var rewards = [10, 20, 30, 50, 75, 100, 200]; var xpReward = rewards[(prof.streak - 1) % 7] || 10;
+    prof.lastLogin = new Date().toISOString(); addXP(xpReward); save(); toast('+' + xpReward + ' XP olindi! 🎉', 'gold'); initDaily();
+}
+
+// === LEADERBOARD ===
+function initRank() {
+    var myLevel = Math.floor(Math.sqrt(xp/100)) + 1;
+    var fakes = [
+        {n: 'Polyglot_Pro', xp: 5500 + Math.floor(Math.random()*1000)},
+        {n: 'GrammarNazi', xp: 3200 + Math.floor(Math.random()*500)},
+        {n: 'WordHunter', xp: 1800 + Math.floor(Math.random()*300)},
+        {n: 'FastFingers', xp: 900 + Math.floor(Math.random()*200)},
+        {n: 'Learner_42', xp: 400 + Math.floor(Math.random()*100)},
+        {n: 'Newbie_01', xp: Math.max(0, xp - 300 - Math.floor(Math.random()*100))},
+        {n: 'CasualPlayer', xp: Math.max(0, xp - 1200 - Math.floor(Math.random()*200))},
+        {n: 'JustStarted', xp: Math.max(0, xp - 2500 - Math.floor(Math.random()*500))}
+    ];
+    
+    fakes.forEach(function(f) { f.level = Math.floor(Math.sqrt(f.xp/100)) + 1; });
+    
+    var all = [...fakes, {n: prof.n + ' (Siz)', xp: xp, level: myLevel, me: true}];
+    
+    all.sort(function(a, b) {
+        if (b.xp !== a.xp) return b.xp - a.xp;
+        return a.n.localeCompare(b.n); 
+    });
+
+    var myPos = all.findIndex(function(u) { return u.me; }) + 1;
+    
+    var h = '<div class="glass no-lift" style="padding:20px;margin-bottom:20px;border-left:4px solid var(--gold);display:flex;justify-content:space-between;align-items:center"><div><div style="font-family:Outfit;font-size:1.3rem;font-weight:900;color:var(--gold)">#' + myPos + ' — Sizning o\'rningiz</div><div style="color:var(--dim);font-size:.85rem;margin-top:3px">Level ' + myLevel + ' • ' + xp + ' XP</div></div><div style="font-size:2.5rem">' + (myPos === 1 ? '🥇' : myPos === 2 ? '🥈' : myPos === 3 ? '🥉' : '⭐') + '</div></div><div class="glass no-lift" style="overflow:hidden">';
+    
+    for (var i = 0; i < all.length; i++) {
+        var u = all[i]; var r = i + 1;
+        var col = r === 1 ? 'var(--gold)' : r === 2 ? '#c0c0c0' : r === 3 ? '#cd7f32' : 'var(--dim)';
+        h += '<div class="lb-row' + (u.me ? ' me' : '') + '"><div style="font-family:Outfit;font-weight:900;width:30px;color:' + col + ';font-size:1.1rem">' + r + '</div><div class="lb-av" style="background:' + col + '18;color:' + col + '">' + esc(u.n.charAt(0).toUpperCase()) + '</div><div style="flex:1"><div style="font-weight:700;font-size:.95rem;' + (u.me ? 'color:var(--accent)' : '') + '">' + esc(u.n) + '</div><div style="font-size:.75rem;color:var(--dim)">Level ' + u.level + ' • ' + u.xp + ' XP</div></div></div>';
+    }
+    h += '</div>';
+    document.getElementById('rankArea').innerHTML = h;
+}
+
+// === PROFILE ===
+function initProf() {
+    var lvl = Math.floor(Math.sqrt(xp / 100)) + 1;
+    var nxt = lvl * lvl * 100, cur = (lvl - 1) * (lvl - 1) * 100;
+    var pct = Math.min(100, Math.round((xp - cur) / Math.max(1, nxt - cur) * 100));
+    var titles = ['Novichok', "O'rganuvchi", 'Bilimdon', 'Usta', 'Legenda', 'Ilohiy', 'Zohid'];
+    var t = titles[Math.min(lvl - 1, titles.length - 1)];
+    
+    var badges = [
+        {n:'10 so\'z',i:'fa-book',ok:prof.w>=10},
+        {n:'5 Quiz',i:'fa-bolt',ok:prof.t>=5},
+        {n:'100 XP',i:'fa-coins',ok:xp>=100},
+        {n:'Level 5',i:'fa-star',ok:lvl>=5},
+        {n:'Level 10',i:'fa-crown',ok:lvl>=10},
+        {n:'10 O\'yin',i:'fa-gamepad',ok:prof.games>=10},
+        {n:'3 Kun Seriya',i:'fa-fire',ok:prof.streak>=3},
+        {n:'7 Kun Seriya',i:'fa-fire-alt',ok:prof.streak>=7}
+    ];
+    
+    var h = '<div class="glass no-lift" style="padding:40px;text-align:center;margin-bottom:25px"><div style="width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-family:Outfit;font-size:2.8rem;font-weight:900;color:var(--bg);margin:0 auto 18px;box-shadow:0 15px 50px rgba(0,240,192,0.4)">' + esc(prof.n.charAt(0)) + '</div><div style="font-family:Outfit;font-size:1.6rem;font-weight:800;margin-bottom:5px">' + esc(prof.n) + '</div><div style="color:var(--gold);font-size:1rem;font-weight:800;margin-bottom:14px"><i class="fas fa-star"></i> Level ' + lvl + ' — ' + esc(t) + '</div><div class="progress-bar" style="max-width:320px;margin:0 auto"><div class="progress-fill" style="width:' + pct + '%"></div></div><div style="font-size:.75rem;color:var(--dim);margin-top:8px">' + (xp - cur) + ' / ' + (nxt - cur) + ' XP</div></div>';
+    
+    h += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:25px"><div class="stat-card"><div class="stat-value">' + prof.w + '</div><div class="stat-label">O\'rganilgan</div></div><div class="stat-card"><div class="stat-value">' + prof.t + '</div><div class="stat-label">Quizlar</div></div><div class="stat-card"><div class="stat-value">' + prof.games + '</div><div class="stat-label">O\'yinlar</div></div><div class="stat-card"><div class="stat-value">' + xp + '</div><div class="stat-label">Jami XP</div></div></div>';
+    
+    h += '<div class="glass no-lift" style="padding:25px"><h3 style="font-family:Outfit;font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px"><i class="fas fa-heart" style="color:var(--danger)"></i> Hayotlar</h3><div style="text-align:center;padding:15px"><div style="font-family:Outfit;font-size:3rem;font-weight:900;color:var(--danger);margin-bottom:8px">' + '❤️'.repeat(lives) + '</div><div style="color:var(--dim);margin-bottom:15px;font-size:.9rem">' + lives + ' / ' + maxLives + '</div><div class="progress-bar" style="margin-bottom:15px"><div class="progress-fill" style="width:' + (lives/maxLives*100) + '%;background:linear-gradient(90deg,var(--danger),var(--pink))"></div></div><button class="btn btn-danger btn-sm" onclick="go(\'shop\')"><i class="fas fa-store"></i> Sotib Olish</button></div></div>';
+    
+    h += '<div class="glass no-lift" style="padding:25px;margin-top:25px"><h3 style="font-family:Outfit;font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px"><i class="fas fa-medal" style="color:var(--gold)"></i> Yutuqlar</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">';
+    for (var i = 0; i < badges.length; i++) { var b = badges[i]; h += '<div style="background:rgba(0,0,0,0.2);border:2px solid ' + (b.ok ? 'rgba(255,193,7,0.4)' : 'var(--border)') + ';border-radius:16px;padding:16px;text-align:center;' + (b.ok ? '' : 'opacity:.3') + '"><i class="fas ' + b.i + '" style="font-size:1.8rem;color:' + (b.ok ? 'var(--gold)' : '#333') + ';display:block;margin-bottom:8px"></i><div style="font-size:.8rem;font-weight:700">' + esc(b.n) + '</div></div>'; }
+    h += '</div></div>';
+    
+    document.getElementById('profArea').innerHTML = h;
+}
+
+// === INIT ===
+words = data[lang];
+updateUI();
+initVoice();
+
+// Hayotlarni har 30 daqiqada tiklash
+setInterval(function() { 
+    if (lives < maxLives) { 
+        lives++; 
+        save(); 
+        toast('+1 hayot tiklandi! ❤️', 'ok'); 
+    } 
+}, 30 * 60 * 1000);
+</script>
+</body>
+</html>
